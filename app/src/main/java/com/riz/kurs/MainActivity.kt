@@ -104,8 +104,8 @@ class MainActivity : Activity() {
             addView(page, FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
         }
         return FrameLayout(this).apply {
-            addView(GlassBackground(this@MainActivity), LayoutParams(MATCH_PARENT, MATCH_PARENT))
-            addView(scroll, LayoutParams(MATCH_PARENT, MATCH_PARENT))
+            addView(GlassBackground(this@MainActivity), FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
+            addView(scroll, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
         }
     }
 
