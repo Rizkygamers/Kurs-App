@@ -35,10 +35,11 @@ import kotlin.math.roundToInt
 private const val API_URL = "https://open.er-api.com/v6/latest/USD"
 private const val FRESH_MS = 6 * 60 * 60 * 1000L // rate API update harian; segarkan tiap 6 jam
 
-private val BG_1 = Color.parseColor("#0b1020")
-private val TEXT = Color.parseColor("#f4f6fb")
-private val MUTED = Color.argb(150, 244, 246, 251)
-private val ERR = Color.parseColor("#ff9aa7")
+// literal int, bukan Color.parseColor: top-level init juga jalan di unit test JVM
+private val BG_1 = 0xFF0B1020.toInt()
+private val TEXT = 0xFFF4F6FB.toInt()
+private val MUTED = 0x96F4F6FB.toInt()
+private val ERR = 0xFFFF9AA7.toInt()
 
 internal data class Mode(
     val label: String,
