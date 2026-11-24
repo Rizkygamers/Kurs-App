@@ -6,12 +6,12 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.Typeface
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
 import android.view.Gravity
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
@@ -113,7 +113,7 @@ class MainActivity : Activity() {
     private fun buildCard(): LinearLayout {
         val card = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            background = glassBg(28, 0.10f)
+            background = glass(32, 0x3DFFFFFF, 0x0FFFFFFF, 0x3D6366F1, 0x3322D3EE, 1.5f)
             elevation = dp(14).toFloat()
             setPadding(dp(20), dp(24), dp(20), dp(22))
         }
@@ -172,7 +172,7 @@ class MainActivity : Activity() {
 
         val well = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            background = glassBg(20, 0.05f, 0.12f)
+            background = glass(22, 0x24FFFFFF, 0x08FFFFFF, 0x2E22D3EE, 0x1A6366F1, 1f)
             setPadding(dp(16), dp(14), dp(16), dp(14))
         }
         resultLabel = TextView(this).apply {
@@ -212,16 +212,18 @@ class MainActivity : Activity() {
             textSize = 14f
             setTextColor(Color.WHITE)
             typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
-            background = GradientDrawable(
-                GradientDrawable.Orientation.TL_BR,
-                intArrayOf(Color.argb(235, 99, 102, 241), Color.argb(200, 79, 70, 229)),
-            ).apply {
-                cornerRadius = dp(22).toFloat()
-                setStroke(dp(1), Color.argb(90, 255, 255, 255))
-            }
+            background = glass(24, 0xE66366F1.toInt(), 0xA64F46E5.toInt(), 0x55FFFFFF, Color.TRANSPARENT, 1f)
             setPadding(dp(18), dp(13), dp(18), dp(13))
             isClickable = true
             setOnClickListener { refresh() }
+            setOnTouchListener { v, e ->
+                when (e.action) {
+                    MotionEvent.ACTION_DOWN -> v.animate().scaleX(0.97f).scaleY(0.97f).setDuration(90).start()
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL ->
+                        v.animate().scaleX(1f).scaleY(1f).setDuration(160).start()
+                }
+                false
+            }
         }, lp().apply { topMargin = dp(18) })
 
         return card
@@ -303,20 +305,20 @@ class MainActivity : Activity() {
     private fun stamp(t: Long): String =
         SimpleDateFormat("d MMM yyyy, HH:mm", Locale.forLanguageTag("id-ID")).format(Date(t))
 
-    private fun glassBg(radius: Int, alpha: Float, strokeAlpha: Float = 0.16f) = GradientDrawable(
-        GradientDrawable.Orientation.TL_BR,
-        intArrayOf(
-            Color.argb((255 * alpha * 1.7f).roundToInt().coerceAtMost(255), 255, 255, 255),
-            Color.argb((255 * alpha * 0.45f).roundToInt(), 255, 255, 255),
-        ),
-    ).apply {
-        cornerRadius = dp(radius).toFloat()
-        setStroke(dp(1), Color.argb((255 * strokeAlpha).roundToInt(), 255, 255, 255))
-    }
+    private fun glass(
+        radiusDp: Int,
+        fillTop: Int,
+        fillBottom: Int,
+        glowA: Int = Color.TRANSPARENT,
+        glowB: Int = Color.TRANSPARENT,
+        strokeDp: Float = 1f,
+    ) = GlassDrawable(dp(radiusDp).toFloat(), dp(strokeDp), fillTop, fillBottom, glowA, glowB)
 
     private fun lp() = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
 
     private fun dp(v: Int) = (v * resources.displayMetrics.density).toInt()
+
+    private fun dp(v: Float) = v * resources.displayMetrics.density
 
     /** Segmented control gaya iOS: pill yang meluncur di dalam panel kaca. */
     private inner class SegmentBar(context: Context) : FrameLayout(context) {
@@ -327,12 +329,8 @@ class MainActivity : Activity() {
 
         init {
             setPadding(dp(4), dp(4), dp(4), dp(4))
-            background = glassBg(16, 0.04f, 0.12f)
-            pill.background = GradientDrawable().apply {
-                cornerRadius = dp(12).toFloat()
-                setColor(Color.argb(52, 255, 255, 255))
-                setStroke(dp(1), Color.argb(46, 255, 255, 255))
-            }
+            background = glass(18, 0x1FFFFFFF, 0x0AFFFFFF, 0x266366F1, Color.TRANSPARENT, 1f)
+            pill.background = glass(14, 0x52FFFFFF, 0x2EFFFFFF, 0x33FFFFFF, Color.TRANSPARENT, 1f)
             addView(pill, LayoutParams(0, MATCH_PARENT))
 
             val row = LinearLayout(context).apply { orientation = LinearLayout.HORIZONTAL }

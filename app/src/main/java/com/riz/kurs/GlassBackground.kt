@@ -16,11 +16,12 @@ private class Blob(val fx: Float, val fy: Float, val fr: Float, val color: Int, 
 class GlassBackground(context: Context) : View(context) {
     private val basePaint = Paint()
     private val blobPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val vignettePaint = Paint(Paint.ANTI_ALIAS_FLAG)
 
     private val blobs = listOf(
-        Blob(0.10f, 0.08f, 0.95f, 0x556366F1, 0.9f),
-        Blob(0.95f, 0.32f, 0.80f, 0x4D22D3EE, 1.3f),
-        Blob(0.45f, 0.95f, 0.90f, 0x44EC4899, 0.7f),
+        Blob(0.10f, 0.08f, 0.95f, 0x666366F1, 0.9f),
+        Blob(0.95f, 0.32f, 0.80f, 0x5C22D3EE, 1.3f),
+        Blob(0.45f, 0.95f, 0.90f, 0x52EC4899, 0.7f),
     )
 
     private var t = 0f
@@ -46,8 +47,12 @@ class GlassBackground(context: Context) : View(context) {
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         basePaint.shader = LinearGradient(
             0f, 0f, w.toFloat(), h.toFloat(),
-            intArrayOf(0xFF0B1020.toInt(), 0xFF10182B.toInt(), 0xFF0B1020.toInt()),
+            intArrayOf(0xFF070B16.toInt(), 0xFF0E1526.toInt(), 0xFF070B16.toInt()),
             null, Shader.TileMode.CLAMP,
+        )
+        vignettePaint.shader = RadialGradient(
+            w / 2f, h / 2f, maxOf(w, h) * 0.78f,
+            Color.TRANSPARENT, 0x99000000.toInt(), Shader.TileMode.CLAMP,
         )
     }
 
@@ -63,5 +68,7 @@ class GlassBackground(context: Context) : View(context) {
             blobPaint.shader = RadialGradient(cx, cy, r, b.color, Color.TRANSPARENT, Shader.TileMode.CLAMP)
             canvas.drawCircle(cx, cy, r, blobPaint)
         }
+
+        canvas.drawRect(0f, 0f, w, h, vignettePaint)
     }
 }
