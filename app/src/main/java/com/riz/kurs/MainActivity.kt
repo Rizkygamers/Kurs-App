@@ -15,7 +15,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.view.animation.FastOutSlowInInterpolator
+import android.view.animation.PathInterpolator
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
@@ -101,11 +101,11 @@ class MainActivity : Activity() {
         val scroll = ScrollView(this).apply {
             isFillViewport = true
             overScrollMode = View.OVER_SCROLL_NEVER
-            addView(page, ScrollView.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+            addView(page, FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
         }
         return FrameLayout(this).apply {
-            addView(GlassBackground(this), FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
-            addView(scroll, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
+            addView(GlassBackground(this@MainActivity), LayoutParams(MATCH_PARENT, MATCH_PARENT))
+            addView(scroll, LayoutParams(MATCH_PARENT, MATCH_PARENT))
         }
     }
 
@@ -361,7 +361,7 @@ class MainActivity : Activity() {
             }
             ValueAnimator.ofFloat(pos, i.toFloat()).apply {
                 duration = 220
-                interpolator = FastOutSlowInInterpolator()
+                interpolator = PathInterpolator(0.4f, 0f, 0.2f, 1f)
                 addUpdateListener {
                     pos = it.animatedValue as Float
                     requestLayout()
